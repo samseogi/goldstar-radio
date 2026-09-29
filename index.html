@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#121316" />
+  <title>1966 금성사 (GoldStar) 트랜지스터 라디오</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;900&family=Nanum+Myeongjo:wght@700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --vintage-cream: #eedfc7;
+      --amber-glow: rgba(255, 157, 30, 0.45);
+      --casing-dark: #191b1f;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #2e313a 0%, #15161b 60%, #090a0d 100%);
+      font-family: 'Share Tech Mono', sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      color: #eae7de;
+    }
+
+    /* 1966 GoldStar Black Leatherette Grain */
+    .vinyl-casing {
+      background-color: var(--casing-dark);
+      background-image: 
+        radial-gradient(#0e0f12 24%, transparent 25%), 
+        radial-gradient(#2d3037 24%, transparent 25%);
+      background-size: 6px 6px;
+      background-position: 0 0, 3px 3px;
+      box-shadow: 
+        inset 0 2px 4px rgba(255,255,255,0.22), 
+        inset 0 -6px 16px rgba(0,0,0,0.95), 
+        0 24px 60px rgba(0,0,0,0.88);
+    }
+
+    /* Brushed Aluminum Faceplate */
+    .brushed-plate {
+      background: linear-gradient(180deg, #f5f6f8 0%, #cbd0d8 18%, #dfe3e9 48%, #9fa5af 85%, #848a94 100%);
+      box-shadow: inset 0 2px 2px rgba(255,255,255,0.9), inset 0 -2px 3px rgba(0,0,0,0.55);
+    }
+
+    .metal-border {
+      border: 2px solid #b6bac2;
+      box-shadow: 0 0 0 1px #35373d, 0 4px 12px rgba(0,0,0,0.7);
+    }
+
+    /* 1966 Analog Backlit Dial Glass */
+    .dial-display {
+      background: linear-gradient(180deg, #181d17 0%, #0d110d 65%, #181c16 100%);
+      box-shadow: inset 0 3px 10px rgba(0,0,0,0.95), inset 0 0 0 1.5px #3a3d44;
+      transition: all 0.3s ease;
+    }
+    .radio-on .dial-display {
+      background: linear-gradient(180deg, #3d2b0e 0%, #1f1404 60%, #2f2008 100%);
+      box-shadow: inset 0 0 32px var(--amber-glow), inset 0 0 50px rgba(255,140,20,0.25), 0 0 12px rgba(255,160,30,0.3);
+    }
+
+    /* Moving Frequency Needle */
+    .tuner-needle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2.5px;
+      background: #ff3311;
+      box-shadow: 0 0 8px #ff4814, 0 0 1px #ffffff;
+      transition: left 0.16s cubic-bezier(0.25, 0.9, 0.35, 1);
+      z-index: 25;
+      pointer-events: none;
+    }
+    .tuner-needle::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: -4px;
+      width: 11px;
+      height: 7px;
+      background: #c92300;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+
+    /* Rotary Knobs with Fixed Shadow Direction */
+    .knob-anchor {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+      cursor: grab;
+    }
+    @media (min-width: 640px) {
+      .knob-anchor {
+        width: 82px;
+        height: 82px;
+      }
+    }
+    .knob-anchor:active {
+      cursor: grabbing;
+    }
+
+    /* Fixed Directional Lighting Bezel Frame */
+    .knob-base-frame {
+      position: absolute;
+      inset: 2px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #565a63 0%, #23252a 55%, #101114 100%);
+      box-shadow: 
+        0 6px 14px rgba(0, 0, 0, 0.75),
+        0 2px 4px rgba(0, 0, 0, 0.9),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+        inset -2px -3px 4px rgba(0, 0, 0, 0.85);
+      border: 2px solid #141518;
+      pointer-events: none;
+    }
+
+    /* Stationary White Index Mark (12 o'clock, Non-rotating) */
+    .stationary-index-notch {
+      position: absolute;
+      top: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3.5px;
+      height: 9px;
+      background: #ffffff;
+      border-radius: 2px;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.95), 0 1px 2px rgba(0, 0, 0, 0.9);
+      z-index: 35;
+      pointer-events: none;
+    }
+
+    /* Rotating Rotor Core */
+    .knob-rotor {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      transform-origin: center center;
+      will-change: transform;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .knob-flutes-rotor {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: repeating-conic-gradient(
+        from 0deg,
+        #111317 0deg 9deg,
+        #3b4049 9deg 18deg,
+        #1d1f24 18deg 27deg
+      );
+      opacity: 0.92;
+    }
+
+    .knob-center-disc {
+      position: absolute;
+      inset: 22%;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #6b707a 0%, #2b2d33 70%, #151619 100%);
+      border: 1px solid #4a4e57;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rotor-pointer-dot {
+      position: absolute;
+      top: 3px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      box-shadow: 0 0 2px #fff;
+    }
+
+    /* Dual Speaker Grille */
+    .grille-board {
+      background-color: var(--vintage-cream);
+      background-image: linear-gradient(180deg, #f5ecd8 0%, #d5c6ab 100%);
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.35), inset 0 -2px 4px rgba(255,255,255,0.4);
+      min-height: 135px;
+      flex: 1 1 auto;
+      position: relative;
+    }
+
+    .slat-slot {
+      background: #111317;
+      height: 5px;
+      border-radius: 3px;
+      box-shadow: inset 0 2px 3px rgba(0,0,0,0.95), 0 1px 1px rgba(255,255,255,0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slat-pulse {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(255, 130, 20, 0.45) 0%, transparent 75%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .playing .slat-pulse {
+      animation: vibePulse 0.4s infinite alternate ease-in-out;
+    }
+    @keyframes vibePulse {
+      0% { opacity: 0.1; transform: scaleY(0.85); }
+      100% { opacity: 0.85; transform: scaleY(1.3); }
+    }
+
+    /* Metal Handle */
+    .metal-handle {
+      background: linear-gradient(180deg, #e4e7ea 0%, #858990 40%, #c1c5cb 70%, #5d6168 100%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px #fff;
+    }
+    .handle-grip {
+      background: linear-gradient(180deg, #18191c 0%, #2f333a 50%, #121316 100%);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 3px 6px rgba(0,0,0,0.8);
+    }
+
+    /* Flat Media Control Buttons on Bottom Plate */
+    .flat-ctrl-btn {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      color: #3b3327;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.15s ease;
+    }
+    .flat-ctrl-btn:hover {
+      color: #111;
+      transform: scale(1.12);
+    }
+    .flat-ctrl-btn:active {
+      transform: scale(0.92);
+    }
+    .play-active-color {
+      color: #b45309;
+    }
+    .play-active-color:hover {
+      color: #ea580c;
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #505663;
+      border-radius: 3px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #15161a;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-between p-2 sm:p-4">
+
+  <!-- Header Info Bar -->
+  <header class="w-full max-w-4xl flex items-center justify-between px-2 py-1 mb-1 text-xs">
+    <div class="flex items-center space-x-2">
+      <span id="liveDot" class="inline-block w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+      <span class="font-bold text-amber-500 uppercase tracking-widest text-[11px] sm:text-xs">
+        1966 GOLDSTAR ALL-TRANSISTOR RADIO
+      </span>
+    </div>
+
+    <!-- Quick Info / APK Guide Button -->
+    <div class="flex items-center space-x-2">
+      <button onclick="toggleApkModal()" class="bg-stone-800 hover:bg-stone-700 text-amber-300 font-bold px-2.5 py-1 rounded text-xs border border-stone-600 transition active:scale-95">
+        📱 APK 안내
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Radio Unit -->
+  <main class="w-full max-w-4xl relative flex flex-col items-center my-auto">
+
+    <!-- Carrying Handle -->
+    <div class="w-11/12 max-w-xl h-9 relative flex items-center justify-center z-10 -mb-2">
+      <div class="absolute left-2 top-0 w-3.5 h-8 metal-handle rounded-t-sm border border-stone-600"></div>
+      <div class="absolute right-2 top-0 w-3.5 h-8 metal-handle rounded-t-sm border border-stone-600"></div>
+      <div class="w-full h-5 metal-handle rounded flex items-center justify-center px-4 border border-stone-500">
+        <div class="w-3/5 h-3.5 handle-grip rounded-sm flex items-center justify-center">
+          <div class="w-11/12 h-0.5 bg-stone-600/60 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radio Enclosure Body -->
+    <div id="radioCasing" class="w-full vinyl-casing rounded-xl p-2.5 sm:p-4 relative border-4 border-[#2c2e35] transition-all flex flex-col">
+
+      <!-- Corner Vintage Screws -->
+      <div class="absolute top-2 left-3 w-3.5 h-3.5 rounded-full bg-stone-400 border border-stone-300 shadow flex items-center justify-center pointer-events-none">
+        <div class="w-2 h-[1px] bg-stone-700 transform rotate-45"></div>
+      </div>
+      <div class="absolute top-2 right-3 w-3.5 h-3.5 rounded-full bg-stone-400 border border-stone-300 shadow flex items-center justify-center pointer-events-none">
+        <div class="w-2 h-[1px] bg-stone-700 transform -rotate-25"></div>
+      </div>
+
+      <!-- Top Power Push Button -->
+      <div class="absolute -top-3.5 right-12 z-20">
+        <button id="topPowerBtn" onclick="togglePower()" title="전원 켜기/끄기" class="w-9 h-4 bg-amber-100 hover:bg-white rounded-t border-t-2 border-x-2 border-stone-300 shadow-md text-[9px] font-bold text-stone-900 transition active:translate-y-0.5">
+          PWR
+        </button>
+      </div>
+
+      <!-- Upper Brushed Aluminum Faceplate -->
+      <div class="brushed-plate rounded-lg p-2.5 sm:p-3 metal-border mb-2 relative">
+
+        <div class="flex justify-between items-center px-3 mb-1 text-stone-800 font-extrabold tracking-wider text-[11px] sm:text-xs">
+          <span>OFF ◄ LOUD</span>
+          <span class="text-[10px] tracking-widest text-stone-600 hidden sm:inline uppercase font-mono">1966 GOLDSTAR MODEL T-66</span>
+          <span>TUNING ►</span>
+        </div>
+
+        <!-- Controls Grid -->
+        <div class="grid grid-cols-12 gap-2 sm:gap-3 items-center">
+
+          <!-- Volume Rotary Knob Assembly (Shadows Fixed to Bezel) -->
+          <div class="col-span-3 sm:col-span-2 flex flex-col items-center justify-center">
+            <div id="volAnchor" class="knob-anchor" title="볼륨 조절 (좌 15°: 볼륨 0 / 우 275°: 볼륨 100)">
+              <div class="knob-base-frame"></div>
+              <div class="stationary-index-notch"></div>
+              <div id="volRotor" class="knob-rotor">
+                <div class="knob-flutes-rotor"></div>
+                <div class="knob-center-disc">
+                  <div class="rotor-pointer-dot"></div>
+                </div>
+              </div>
+            </div>
+            <span class="text-[10px] sm:text-xs font-bold text-stone-900 mt-1">
+              VOL <span id="volLevelText">70%</span>
+            </span>
+          </div>
+
+          <!-- Frequency Tuner Dial Window -->
+          <div class="col-span-6 sm:col-span-8 flex flex-col">
+            <div id="glassDial" class="dial-display relative rounded-md p-1.5 sm:p-2 border-2 border-stone-800 h-28 sm:h-32 flex flex-col justify-between overflow-hidden cursor-pointer" onclick="handleDialClick(event)" title="다이얼 눈금을 클릭하거나 드래그하여 주파수 이동">
+              
+              <!-- Subtle Amber Backlight Glow -->
+              <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_center,_var(--amber-dial)_0%,_transparent_75%)]"></div>
+
+              <!-- Moving Frequency Needle -->
+              <div id="tunerNeedle" class="tuner-needle" style="left: 10%;"></div>
+
+              <!-- FM Scale -->
+              <div class="relative z-10">
+                <div class="flex items-center justify-between text-[11px] sm:text-xs font-bold text-amber-200/90 tracking-wider border-b border-stone-700/60 pb-0.5">
+                  <span class="text-amber-400 font-black px-1 bg-black/50 rounded">FM</span>
+                  <span>88</span>
+                  <span>90</span>
+                  <span>93</span>
+                  <span>96</span>
+                  <span>100</span>
+                  <span>104</span>
+                  <span>108</span>
+                  <span class="text-[10px] text-stone-400">MC</span>
+                </div>
+                <div class="flex justify-between px-6 h-1.5 text-amber-300/40 text-[7px]">
+                  <span>|</span><span>:</span><span>|</span><span>:</span><span>|</span><span>:</span><span>|</span><span>:</span><span>|</span><span>:</span><span>|</span>
+                </div>
+              </div>
+
+              <!-- Center Station / Broadcast Information Overlay with Station Logo -->
+              <div class="relative z-10 bg-black/80 border border-stone-800 rounded px-2 py-1 flex items-center justify-between shadow-inner">
+                <div class="flex items-center space-x-2.5 truncate">
+                  <!-- Station Logo Box -->
+                  <div class="w-9 h-9 rounded shrink-0 bg-stone-900 border border-stone-700 flex items-center justify-center p-0.5 overflow-hidden shadow">
+                    <div id="stationLogoWrapper" class="w-full h-full flex items-center justify-center"></div>
+                  </div>
+
+                  <!-- 방송정보를 채널명 옆에 나란히 표시 -->
+                  <div class="flex items-center space-x-2 truncate">
+                    <span id="stationNameDisplay" class="text-amber-300 font-bold text-xs sm:text-sm truncate">
+                      KBS 2FM (쿨FM)
+                    </span>
+                    <span id="stationProgramDisplay" class="text-[10px] bg-amber-500/20 text-amber-200 border border-amber-500/40 px-1.5 py-0.5 rounded font-sans truncate shrink-0 max-w-[170px] sm:max-w-[240px]">
+                      생방송 라디오 스트리밍
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-end shrink-0 ml-2">
+                  <div class="flex items-center space-x-1 font-mono text-[10px]">
+                    <span id="liveStatusBadge" class="text-emerald-400 font-bold">READY</span>
+                    <span id="freqBadge" class="bg-stone-800 text-stone-200 px-1.5 py-0.2 rounded border border-stone-700">
+                      89.1 MHz
+                    </span>
+                  </div>
+                  <span id="stationOrderBadge" class="text-[9px] text-stone-500 font-mono mt-0.5">
+                    CH 01 / 38
+                  </span>
+                </div>
+              </div>
+
+              <!-- AM Scale -->
+              <div class="relative z-10 border-t border-stone-700/60 pt-0.5">
+                <div class="flex justify-between px-6 h-1.5 text-amber-300/40 text-[7px]">
+                  <span>|</span><span>:</span><span>|</span><span>:</span><span>|</span><span>:</span><span>|</span><span>:</span><span>|</span><span>:</span><span>|</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] sm:text-xs font-bold text-amber-200/90 tracking-wider">
+                  <span class="text-amber-400 font-black px-1 bg-black/50 rounded">AM</span>
+                  <span>54</span>
+                  <span>6</span>
+                  <span>7</span>
+                  <span>8</span>
+                  <span>10</span>
+                  <span>12</span>
+                  <span>16</span>
+                  <span class="text-[10px] text-stone-400">KC</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Frequency Tuning Rotary Knob Assembly (Shadows Fixed to Bezel) -->
+          <div class="col-span-3 sm:col-span-2 flex flex-col items-center justify-center">
+            <div id="tunAnchor" class="knob-anchor" title="주파수 튜닝 (자연스럽고 안정적인 회전)">
+              <div class="knob-base-frame"></div>
+              <div class="stationary-index-notch"></div>
+              <div id="tunRotor" class="knob-rotor">
+                <div class="knob-flutes-rotor"></div>
+                <div class="knob-center-disc">
+                  <div class="rotor-pointer-dot"></div>
+                </div>
+              </div>
+            </div>
+            <span class="text-[10px] sm:text-xs font-bold text-stone-900 mt-1">
+              TUNING
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Upper Transistor Band: Region Selector placed directly in front of '주파수 목록' -->
+        <div class="mt-2 py-1 px-3 bg-stone-900 border-y-2 border-stone-600 rounded flex flex-wrap items-center justify-between gap-1.5">
+          <div class="text-[10px] sm:text-[11px] font-bold tracking-[0.22em] text-stone-300 uppercase truncate">
+            AM/FM HIGH SENSITIVITY TRANSISTOR RADIO
+          </div>
+
+          <!-- Controls: [📍 지역: 수도권 / 전국 ▼] [📻 주파수 목록 (38)] -->
+          <div class="flex items-center space-x-1.5">
+            <button onclick="toggleRegionModal()" class="flex items-center space-x-1 bg-stone-950 hover:bg-stone-800 text-stone-200 border border-stone-600 px-2.5 py-0.5 rounded shadow text-[10px] sm:text-xs transition active:scale-95 font-bold" title="방송 권역 변경">
+              <span>📍 지역:</span>
+              <span id="currentRegionLabel" class="text-amber-400">수도권 / 전국</span>
+              <span class="text-[9px] text-stone-400">▼</span>
+            </button>
+            <button onclick="toggleChannelModal()" class="bg-amber-600 hover:bg-amber-500 text-stone-950 font-black text-[10px] sm:text-xs px-2.5 py-0.5 rounded shadow transition active:scale-95">
+              주파수 목록 (<span id="totalStationCount">38</span>)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Lower Cream Speaker Grille & Unified Bottom Line -->
+      <div class="grille-board rounded-lg p-2.5 sm:p-3 border-2 border-stone-400/80 relative shadow-inner flex flex-col justify-between">
+        
+        <!-- Dual Speaker Slats Grille (Pure Grille, Unobstructed) -->
+        <div class="grid grid-cols-2 gap-3 sm:gap-6 mb-2 flex-1 items-center relative">
+          <div class="flex flex-col space-y-1 sm:space-y-1.5" id="leftSpeakerSlats"></div>
+          <div class="flex flex-col space-y-1 sm:space-y-1.5" id="rightSpeakerSlats"></div>
+        </div>
+
+        <!-- 
+          Unified Bottom Plate with Absolute Center Alignment:
+          - Left: GoldStar Logo Plaque
+          - Center: Media Controls positioned absolutely at left: 50%, transform: translate(-50%, -50%)
+          - Right: FM/AFC Badge
+        -->
+        <div class="relative w-full flex items-center justify-between pt-2 border-t border-stone-300/80 min-h-[46px]">
+          
+          <!-- 1. GoldStar Authentic Crown Emblem & Typography Plaque -->
+          <div class="bg-white/95 px-2.5 py-1 rounded border border-stone-400 shadow-sm flex items-center space-x-2 shrink-0 z-10" title="금성사 GoldStar">
+            <!-- GS Crown Badge SVG (#FF0000) -->
+            <svg class="h-6 w-6 shrink-0" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100" height="100" fill="#FF0000" rx="3"/>
+              <circle cx="50" cy="50" r="41.5" fill="#FFFFFF"/>
+              <!-- Crown with 5 pearls -->
+              <path d="M 23 59 L 32.5 37 L 43 53.5 L 50 25 L 57 53.5 L 67.5 37 L 77 59 Z" fill="#FF0000"/>
+              <circle cx="32.5" cy="34" r="4.2" fill="#FF0000"/>
+              <circle cx="50" cy="22" r="4.8" fill="#FF0000"/>
+              <circle cx="67.5" cy="34" r="4.2" fill="#FF0000"/>
+              <circle cx="21" cy="57.5" r="3.8" fill="#FF0000"/>
+              <circle cx="79" cy="57.5" r="3.8" fill="#FF0000"/>
+              <!-- Base Ribbon Arch -->
+              <path d="M 18 63.5 C 36 66.8 64 66.8 82 63.5 L 79 68.5 C 62 71.5 38 71.5 21 68.5 Z" fill="#FF0000"/>
+              <!-- GS Lettering -->
+              <text x="50" y="85.5" font-family="'Arial Black', sans-serif" font-weight="900" font-size="19" fill="#FF0000" text-anchor="middle" letter-spacing="1">GS</text>
+            </svg>
+            <!-- Dual Typography: 금성사 & GoldStar -->
+            <div class="flex items-center space-x-2 pl-2 border-l border-stone-300">
+              <span class="font-extrabold text-stone-950 text-xs sm:text-sm tracking-tight" style="font-family:'Nanum Myeongjo', serif;">
+                금성사
+              </span>
+              <span class="font-black text-stone-900 text-xs sm:text-sm tracking-tighter" style="font-family:'Chakra Petch', sans-serif;">
+                GoldStar
+              </span>
+            </div>
+          </div>
+
+          <!-- 2. Centered Media Playback Controls (Mathematical 50% Center of Bottom Plate) -->
+          <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center gap-6 sm:gap-8 z-20">
+            <!-- Previous Button -->
+            <button id="btnPrev" onclick="changeStationOffset(-1)" title="이전 주파수" class="flat-ctrl-btn" aria-label="이전 주파수">
+              <svg class="w-6 h-6 sm:w-7 sm:h-7 fill-current" viewBox="0 0 24 24">
+                <path d="M6 6h2.5v12H6zm3.5 6l9.5 6.5V5.5z"/>
+              </svg>
+            </button>
+
+            <!-- Play / Pause Button -->
+            <button id="btnPlayPause" onclick="togglePlayPause()" title="방송 재생 / 일시정지" class="flat-ctrl-btn play-active-color" aria-label="방송 재생/정지">
+              <!-- Play Icon -->
+              <svg id="iconPlay" class="w-8 h-8 sm:w-9 sm:h-9 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <!-- Pause Icon -->
+              <svg id="iconPause" class="w-8 h-8 sm:w-9 sm:h-9 fill-current hidden" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            </button>
+
+            <!-- Next Button -->
+            <button id="btnNext" onclick="changeStationOffset(1)" title="다음 주파수" class="flat-ctrl-btn" aria-label="다음 주파수">
+              <svg class="w-6 h-6 sm:w-7 sm:h-7 fill-current" viewBox="0 0 24 24">
+                <path d="M5 18.5l9.5-6.5L5 5.5v13zM15.5 6H18v12h-2.5z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 3. Original FM / AFC Model Badge -->
+          <div class="bg-stone-950 border border-red-700 px-2.5 py-1 rounded flex items-center space-x-1.5 shadow shrink-0 z-10">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-600 shadow-sm"></span>
+            <span class="text-stone-100 text-[11px] sm:text-xs font-black tracking-wider">FM / AFC</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="text-stone-400 text-[11px] sm:text-xs mt-2 text-center">
+      * 하단 라인: [금성사 로고] — [이전 / 재생 / 다음 (수학적 50% 중앙)] — [FM/AFC] | 볼륨: 15°~275° | 튜닝 노브: 감도 댐핑
+    </p>
+  </main>
+
+  <!-- Region Selection Modal -->
+  <div id="regionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3">
+    <div class="bg-stone-900 border-2 border-stone-600 rounded-xl w-full max-w-sm flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-3 border-b border-stone-700 flex justify-between items-center bg-stone-950">
+        <span class="text-amber-500 font-bold text-sm">📍 방송 수신 지역 선택</span>
+        <button onclick="toggleRegionModal()" class="text-stone-400 hover:text-white text-lg font-bold px-2">✕</button>
+      </div>
+      <div class="p-4 space-y-2.5">
+        <button onclick="selectRegion('seoul')" class="w-full text-left p-3 rounded-lg border flex items-center justify-between transition group bg-stone-950 hover:bg-stone-800 border-stone-700" id="regOptSeoul">
+          <div>
+            <div class="text-sm font-bold text-stone-100 group-hover:text-amber-400">수도권 / 전국</div>
+            <div class="text-[11px] text-stone-400">KBS, MBC, SBS, EBS, TBS, CBS, YTN 등 38개 채널</div>
+          </div>
+          <span class="text-xs font-bold text-amber-500">선택</span>
+        </button>
+
+        <button onclick="selectRegion('busan')" class="w-full text-left p-3 rounded-lg border flex items-center justify-between transition group bg-stone-950 hover:bg-stone-800 border-stone-700" id="regOptBusan">
+          <div>
+            <div class="text-sm font-bold text-stone-100 group-hover:text-amber-400">부산 / 경남 / 울산</div>
+            <div class="text-[11px] text-stone-400">부산/울산/창원/진주 KBS·MBC, KNN, UBC, TBN 등 37개 채널</div>
+          </div>
+          <span class="text-xs font-bold text-amber-500">선택</span>
+        </button>
+      </div>
+      <div class="p-2.5 border-t border-stone-800 bg-stone-950 text-right">
+        <button onclick="toggleRegionModal()" class="bg-stone-700 hover:bg-stone-600 text-stone-200 text-xs px-4 py-1.5 rounded font-bold">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frequency List Modal ('주파수 목록') -->
+  <div id="channelModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3">
+    <div class="bg-stone-900 border-2 border-stone-600 rounded-xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl">
+      <div class="p-3 border-b border-stone-700 flex justify-between items-center bg-stone-950 rounded-t-xl">
+        <div class="flex items-center space-x-2">
+          <span class="text-amber-500 font-bold text-sm">📻 주파수 목록</span>
+          <span id="modalRegionBadge" class="text-[10px] bg-stone-800 text-stone-300 px-2 py-0.5 rounded border border-stone-700">
+            수도권 / 전국
+          </span>
+        </div>
+        <button onclick="toggleChannelModal()" class="text-stone-400 hover:text-white text-lg font-bold px-2 py-0.5">✕</button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="p-2 border-b border-stone-800 bg-stone-900">
+        <input id="searchInput" type="text" oninput="handleSearch()" placeholder="방송사명 또는 주파수 검색 (예: KBS, 89.1, MBC, SBS, 107.7...)" class="w-full bg-stone-950 border border-stone-700 rounded px-3 py-1.5 text-xs text-stone-200 focus:outline-none focus:border-amber-500" />
+      </div>
+
+      <!-- Station List (Strict Frequency Ascending) -->
+      <div id="channelList" class="p-2 overflow-y-auto custom-scroll space-y-1.5 flex-1 max-h-[55vh]"></div>
+
+      <div class="p-2 border-t border-stone-800 bg-stone-950 text-right rounded-b-xl flex justify-between items-center">
+        <span class="text-[11px] text-stone-500">주파수(MHz) 오름차순 정렬</span>
+        <button onclick="toggleChannelModal()" class="bg-stone-700 hover:bg-stone-600 text-stone-200 text-xs px-4 py-1.5 rounded font-bold">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APK Information Modal -->
+  <div id="apkModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-3">
+    <div class="bg-stone-900 border-2 border-amber-600/70 rounded-xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl text-stone-200">
+      <div class="p-3.5 border-b border-stone-700 flex justify-between items-center bg-stone-950 rounded-t-xl">
+        <h3 class="text-amber-400 font-bold text-sm sm:text-base">
+          📱 안드로이드 10+ APK 및 PWA 설치
+        </h3>
+        <button onclick="toggleApkModal()" class="text-stone-400 hover:text-white text-lg font-bold px-2">✕</button>
+      </div>
+      <div class="p-4 overflow-y-auto custom-scroll space-y-3 text-xs leading-relaxed">
+        <div class="bg-emerald-950/40 border border-emerald-700/50 p-3 rounded-lg text-emerald-200">
+          <strong>✓ 안드로이드 10+ 백그라운드 &amp; 가로/세로 화면 지원:</strong><br>
+          MediaSession API를 탑재하여 화면 꺼짐(잠금 화면), 상단 알림 바, 블루투스 이어폰 및 자동차 핸들 리모컨에서도 끊김 없이 재생/정지/채널 탐색이 작동합니다.
+        </div>
+
+        <h4 class="font-bold text-stone-100 text-sm">1. 브라우저에서 바로 앱으로 설치하기 (PWA)</h4>
+        <p class="text-stone-300">
+          안드로이드 크롬(Chrome) 브라우저 우측 상단 메뉴(점 3개) &gt; <strong>[홈 화면에 추가]</strong> 또는 <strong>[앱 설치]</strong>를 누르면 별도 빌드 없이 독립형 안드로이드 앱으로 스마트폰에 즉시 설치됩니다.
+        </p>
+
+        <h4 class="font-bold text-stone-100 text-sm mt-2">2. Capacitor CLI로 네이티브 APK 빌드</h4>
+        <div class="bg-black/90 p-3 rounded font-mono text-[11px] text-emerald-400 space-y-1">
+          <p>npm init @capacitor/app goldstar-radio</p>
+          <p>cd goldstar-radio &amp;&amp; npm install @capacitor/android</p>
+          <p>npx cap add android</p>
+          <p># index.html 파일을 www/ 폴더에 복사</p>
+          <p>npx cap copy</p>
+          <p>npx cap open android  # Android Studio에서 APK 빌드</p>
+        </div>
+      </div>
+      <div class="p-3 border-t border-stone-800 bg-stone-950 text-right rounded-b-xl">
+        <button onclick="toggleApkModal()" class="bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs px-5 py-2 rounded">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Element -->
+  <audio id="radioAudio" preload="none" playsinline></audio>
+
+  <script>
+    /*
+     * Station Logos (SVG)
+     */
+    function getStationLogoSvg(brand) {
+      switch (brand) {
+        case 'KBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#003580"/><path d="M22 28h13v18l18-18h18L51 47l22 25H55L35 50v22H22V28z" fill="#FFF"/><circle cx="82" cy="70" r="5" fill="#E31B23"/></svg>`;
+        case 'KBS_COOL':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#1C1D21"/><circle cx="50" cy="50" r="38" fill="#F03800"/><text x="50" y="47" font-size="20" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">COOL</text><text x="50" y="68" font-size="16" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">89.1</text></svg>`;
+        case 'KBS_CLASSIC':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#3D180A"/><text x="50" y="44" font-size="16" font-weight="900" fill="#E6CA65" text-anchor="middle" font-family="sans-serif">KBS 1FM</text><text x="50" y="68" font-size="22" font-weight="bold" fill="#FFF" text-anchor="middle" font-family="sans-serif">CLASSIC</text></svg>`;
+        case 'KBS_HAPPY':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#007749"/><circle cx="50" cy="50" r="36" fill="#FFCC00"/><text x="50" y="47" font-size="18" font-weight="900" fill="#007749" text-anchor="middle" font-family="sans-serif">HAPPY</text><text x="50" y="67" font-size="17" font-weight="900" fill="#007749" text-anchor="middle" font-family="sans-serif">2라디오</text></svg>`;
+        case 'MBC':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#1E2024"/><text x="50" y="48" font-size="26" font-weight="900" fill="#00A0E9" text-anchor="middle" font-family="sans-serif">MBC</text><text x="50" y="72" font-size="15" font-weight="700" fill="#FFF" text-anchor="middle" font-family="sans-serif">표준FM</text></svg>`;
+        case 'MBC_FM4U':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#E5007D"/><text x="50" y="44" font-size="21" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">MBC</text><text x="50" y="70" font-size="22" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">FM4U</text></svg>`;
+        case 'SBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#0B2B64"/><circle cx="50" cy="38" r="16" fill="#0091FF"/><path d="M50 26a12 12 0 1 1 0 24 12 12 0 0 1 0-24z" fill="#FFF"/><text x="50" y="74" font-size="18" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">SBS</text></svg>`;
+        case 'SBS_POWER':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#002B49"/><text x="50" y="44" font-size="18" font-weight="900" fill="#38BDF8" text-anchor="middle" font-family="sans-serif">SBS</text><text x="50" y="68" font-size="20" font-weight="900" fill="#FACC15" text-anchor="middle" font-family="sans-serif">POWER</text></svg>`;
+        case 'SBS_LOVE':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#581C87"/><text x="50" y="44" font-size="18" font-weight="900" fill="#F472B6" text-anchor="middle" font-family="sans-serif">SBS</text><text x="50" y="68" font-size="22" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">LOVE</text></svg>`;
+        case 'KNN':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#0D5CA8"/><text x="50" y="58" font-size="26" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">KNN</text></svg>`;
+        case 'EBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#024B8B"/><circle cx="50" cy="35" r="14" fill="#00A3E0"/><text x="50" y="72" font-size="22" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">EBS</text></svg>`;
+        case 'TBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#3B82F6"/><text x="50" y="48" font-size="24" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">tbs</text><text x="50" y="72" font-size="15" font-weight="800" fill="#FEF08A" text-anchor="middle" font-family="sans-serif">FM 95.1</text></svg>`;
+        case 'CBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#1E3A8A"/><text x="50" y="48" font-size="25" font-weight="900" fill="#60A5FA" text-anchor="middle" font-family="sans-serif">CBS</text><text x="50" y="70" font-size="14" font-weight="700" fill="#FFF" text-anchor="middle" font-family="sans-serif">레인보우</text></svg>`;
+        case 'CBS_MUSIC':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#065F46"/><text x="50" y="44" font-size="20" font-weight="900" fill="#A7F3D0" text-anchor="middle" font-family="sans-serif">CBS</text><text x="50" y="68" font-size="18" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">음악FM</text></svg>`;
+        case 'TBN':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#D97706"/><circle cx="50" cy="50" r="34" fill="#1C1917"/><text x="50" y="47" font-size="20" font-weight="900" fill="#FBBF24" text-anchor="middle" font-family="sans-serif">TBN</text><text x="50" y="66" font-size="13" font-weight="800" fill="#FFF" text-anchor="middle" font-family="sans-serif">교통방송</text></svg>`;
+        case 'YTN':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#1E293B"/><text x="50" y="47" font-size="22" font-weight="900" fill="#38BDF8" text-anchor="middle" font-family="sans-serif">YTN</text><text x="50" y="70" font-size="14" font-weight="800" fill="#F1F5F9" text-anchor="middle" font-family="sans-serif">라디오</text></svg>`;
+        case 'FEBC':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#B91C1C"/><text x="50" y="46" font-size="20" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">FEBC</text><text x="50" y="68" font-size="15" font-weight="800" fill="#FEF08A" text-anchor="middle" font-family="sans-serif">극동방송</text></svg>`;
+        case 'BBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#854D0E"/><text x="50" y="46" font-size="22" font-weight="900" fill="#FEF08A" text-anchor="middle" font-family="sans-serif">BBS</text><text x="50" y="68" font-size="14" font-weight="700" fill="#FFF" text-anchor="middle" font-family="sans-serif">불교방송</text></svg>`;
+        case 'CPBC':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#0369A1"/><text x="50" y="46" font-size="20" font-weight="900" fill="#BAE6FD" text-anchor="middle" font-family="sans-serif">CPBC</text><text x="50" y="68" font-size="14" font-weight="700" fill="#FFF" text-anchor="middle" font-family="sans-serif">평화방송</text></svg>`;
+        case 'OBS':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#EA580C"/><text x="50" y="58" font-size="24" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">OBS</text></svg>`;
+        case 'GUGAK':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#431407"/><circle cx="50" cy="50" r="32" fill="#991B1B"/><text x="50" y="56" font-size="18" font-weight="900" fill="#FEF08A" text-anchor="middle" font-family="sans-serif">국악</text></svg>`;
+        case 'DEFENSE':
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#14532D"/><circle cx="50" cy="34" r="34" fill="#166534"/><text x="50" y="56" font-size="18" font-weight="900" fill="#FFF" text-anchor="middle" font-family="sans-serif">국방FM</text></svg>`;
+        default:
+          return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#27272A"/><circle cx="50" cy="50" r="28" fill="#3F3F46"/><text x="50" y="57" font-size="18" font-weight="900" fill="#F59E0B" text-anchor="middle" font-family="sans-serif">FM</text></svg>`;
+      }
+    }
+
+    /*
+     * Mapped Stations from seoul.m3u & busan.m3u (Strict Frequency Ascending Order)
+     */
+    const RAW_SEOUL = [
+      { name: "AFN FM Humphreys", url: "https://radio.bsod.kr/stream?stn=afn&city=humphreys", mhz: 88.3, brand: "AFN" },
+      { name: "단원FM (안산)", url: "https://radio.bsod.kr/stream?stn=community&ch=dwfm", mhz: 88.7, brand: "단원FM" },
+      { name: "KBS 2FM (쿨FM)", url: "https://radio.bsod.kr/stream?stn=kbs&ch=2fm", mhz: 89.1, brand: "KBS_COOL" },
+      { name: "WBS 서울원음방송", url: "https://radio.bsod.kr/stream?stn=wbs", mhz: 89.7, brand: "WBS" },
+      { name: "iFM 경인방송", url: "https://radio.bsod.kr/stream?stn=ifm", mhz: 90.7, brand: "iFM" },
+      { name: "성남FM", url: "https://radio.bsod.kr/stream?stn=community&ch=seongnamfm", mhz: 90.7, brand: "성남FM" },
+      { name: "서대문FM", url: "https://radio.bsod.kr/stream?stn=community&ch=sdmfm", mhz: 91.3, brand: "서대문FM" },
+      { name: "MBC FM4U", url: "https://radio.bsod.kr/stream?stn=mbc&ch=fm4u", mhz: 91.9, brand: "MBC_FM4U" },
+      { name: "MBC mini 올댓뮤직", url: "https://radio.bsod.kr/stream?stn=mbc&ch=chm", mhz: 92.5, isWeb: true, brand: "MBC_FM4U" },
+      { name: "KBS 1FM (클래식FM)", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1fm", mhz: 93.1, brand: "KBS_CLASSIC" },
+      { name: "CBS 음악FM", url: "https://radio.bsod.kr/stream?stn=cbs&ch=mfm", mhz: 93.9, brand: "CBS_MUSIC" },
+      { name: "CBS JOY4U", url: "https://radio.bsod.kr/stream?stn=cbs&ch=joy4u", mhz: 94.1, isWeb: true, brand: "CBS" },
+      { name: "YTN 라디오", url: "https://radio.bsod.kr/stream?stn=ytn", mhz: 94.5, brand: "YTN" },
+      { name: "TBS FM (교통방송)", url: "https://radio.bsod.kr/stream?stn=tbs&ch=fm", mhz: 95.1, brand: "TBS" },
+      { name: "MBC 표준FM", url: "https://radio.bsod.kr/stream?stn=mbc&ch=sfm", mhz: 95.9, brand: "MBC" },
+      { name: "수원FM", url: "https://radio.bsod.kr/stream?stn=community&ch=sonefm", mhz: 96.3, brand: "수원FM" },
+      { name: "MBC 보이는 라디오", url: "https://radio.bsod.kr/stream?stn=mbc&ch=bora", mhz: 96.5, isWeb: true, brand: "MBC" },
+      { name: "국방FM", url: "https://radio.bsod.kr/stream?stn=kookbang", mhz: 96.7, brand: "DEFENSE" },
+      { name: "KBS 1라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1radio", mhz: 97.3, brand: "KBS" },
+      { name: "CBS 표준FM", url: "https://radio.bsod.kr/stream?stn=cbs&ch=sfm", mhz: 98.1, brand: "CBS" },
+      { name: "국악방송", url: "https://radio.bsod.kr/stream?stn=kugak", mhz: 99.1, brand: "GUGAK" },
+      { name: "OBS 라디오", url: "https://radio.bsod.kr/stream?stn=obs", mhz: 99.9, brand: "OBS" },
+      { name: "관악FM", url: "https://radio.bsod.kr/stream?stn=community&ch=gwanakfm", mhz: 100.3, brand: "관악FM" },
+      { name: "TBN 경인교통방송", url: "https://radio.bsod.kr/stream?stn=tbn", mhz: 100.5, brand: "TBN" },
+      { name: "마포FM", url: "https://radio.bsod.kr/stream?stn=community&ch=mapofm", mhz: 100.7, brand: "마포FM" },
+      { name: "TBS eFM", url: "https://radio.bsod.kr/stream?stn=tbs&ch=efm", mhz: 101.3, brand: "TBS" },
+      { name: "BBS 서울불교방송", url: "https://radio.bsod.kr/stream?stn=bbs", mhz: 101.9, brand: "BBS" },
+      { name: "SBS 고릴라디오M", url: "https://radio.bsod.kr/stream?stn=sbs&ch=dmb", mhz: 102.5, isWeb: true, brand: "SBS_POWER" },
+      { name: "SBS 러브FM", url: "https://radio.bsod.kr/stream?stn=sbs&ch=lovefm", mhz: 103.5, brand: "SBS_LOVE" },
+      { name: "EBS FM", url: "https://radio.bsod.kr/stream?stn=ebs&ch=fm", mhz: 104.5, brand: "EBS" },
+      { name: "EBS 반디 외국어 전문", url: "https://radio.bsod.kr/stream?stn=ebs&ch=bandi", mhz: 104.7, isWeb: true, brand: "EBS" },
+      { name: "KBS 3라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=3radio", mhz: 104.9, brand: "KBS" },
+      { name: "CPBC 가톨릭평화방송", url: "https://radio.bsod.kr/stream?stn=cpbc", mhz: 105.3, brand: "CPBC" },
+      { name: "KBS 2라디오 (해피FM)", url: "https://radio.bsod.kr/stream?stn=kbs&ch=2radio", mhz: 106.1, brand: "KBS_HAPPY" },
+      { name: "FEBC 서울극동방송", url: "https://radio.bsod.kr/stream?stn=febc", mhz: 106.9, brand: "FEBC" },
+      { name: "GO구리FM", url: "https://radio.bsod.kr/stream?stn=community&ch=gurifm", mhz: 106.9, brand: "구리FM" },
+      { name: "SBS 파워FM", url: "https://radio.bsod.kr/stream?stn=sbs&ch=powerfm", mhz: 107.7, brand: "SBS_POWER" },
+      { name: "KBS 한민족방송", url: "https://radio.bsod.kr/stream?stn=kbs&ch=hanminjok", mhz: 972, isAm: true, brand: "KBS" }
+    ];
+
+    const RAW_BUSAN = [
+      { name: "부산MBC FM4U", url: "https://radio.bsod.kr/stream?stn=mbc&ch=fm4u&city=busan", mhz: 88.9, brand: "MBC_FM4U" },
+      { name: "BBS 부산불교방송", url: "https://radio.bsod.kr/stream?stn=bbs&city=busan", mhz: 89.9, brand: "BBS" },
+      { name: "KBS진주 1라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1radio&city=jinju", mhz: 90.3, brand: "KBS" },
+      { name: "부산영어방송 (BeFM)", url: "https://radio.bsod.kr/stream?stn=befm", mhz: 90.5, brand: "TBS" },
+      { name: "KBS울산 1라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1radio&city=ulsan", mhz: 90.7, brand: "KBS" },
+      { name: "KBS창원 1라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1radio&city=changwon", mhz: 91.7, brand: "KBS" },
+      { name: "남해FM", url: "https://radio.bsod.kr/stream?stn=community&ch=namhaefm", mhz: 91.9, brand: "남해FM" },
+      { name: "UBC 그린FM (울산)", url: "https://radio.bsod.kr/stream?stn=sbs&ch=powerfm&city=ulsan", mhz: 92.3, brand: "SBS_POWER" },
+      { name: "KBS부산 음악FM", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1fm&city=busan", mhz: 92.7, brand: "KBS_CLASSIC" },
+      { name: "FEBC 부산극동방송", url: "https://radio.bsod.kr/stream?stn=febc&city=busan", mhz: 93.3, brand: "FEBC" },
+      { name: "KBS창원 음악FM", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1fm&city=changwon", mhz: 93.9, brand: "KBS_CLASSIC" },
+      { name: "CBS JOY4U", url: "https://radio.bsod.kr/stream?stn=cbs&ch=joy4u", mhz: 94.0, isWeb: true, brand: "CBS" },
+      { name: "TBN 부산교통방송", url: "https://radio.bsod.kr/stream?stn=tbn&city=busan", mhz: 94.9, brand: "TBN" },
+      { name: "TBN 경남교통방송", url: "https://radio.bsod.kr/stream?stn=tbn&city=gyeongnam", mhz: 95.5, brand: "TBN" },
+      { name: "부산MBC 표준FM", url: "https://radio.bsod.kr/stream?stn=mbc&ch=sfm&city=busan", mhz: 95.9, brand: "MBC" },
+      { name: "국방FM", url: "https://radio.bsod.kr/stream?stn=kookbang", mhz: 96.7, brand: "DEFENSE" },
+      { name: "KBS부산 2라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=2radio&city=busan", mhz: 97.1, brand: "KBS_HAPPY" },
+      { name: "울산MBC 표준FM", url: "https://radio.bsod.kr/stream?stn=mbc&ch=sfm&city=ulsan", mhz: 97.5, brand: "MBC" },
+      { name: "FEBC 창원극동방송", url: "https://radio.bsod.kr/stream?stn=febc&city=changwon", mhz: 98.1, brand: "FEBC" },
+      { name: "울산MBC FM4U", url: "https://radio.bsod.kr/stream?stn=mbc&ch=fm4u&city=ulsan", mhz: 98.7, brand: "MBC_FM4U" },
+      { name: "MBC경남 표준FM", url: "https://radio.bsod.kr/stream?stn=mbc&ch=sfm&city=changwon", mhz: 98.9, brand: "MBC" },
+      { name: "KNN 파워FM (부산)", url: "https://radio.bsod.kr/stream?stn=sbs&ch=powerfm&city=busan", mhz: 99.9, brand: "KNN" },
+      { name: "울산CBS 표준FM", url: "https://radio.bsod.kr/stream?stn=cbs&ch=sfm&city=ulsan", mhz: 100.3, brand: "CBS" },
+      { name: "MBC경남 FM4U", url: "https://radio.bsod.kr/stream?stn=mbc&ch=fm4u&city=changwon", mhz: 100.5, brand: "MBC_FM4U" },
+      { name: "CPBC 부산가톨릭평화", url: "https://radio.bsod.kr/stream?stn=cpbc&city=busan", mhz: 101.1, brand: "CPBC" },
+      { name: "부산CBS 음악FM", url: "https://radio.bsod.kr/stream?stn=cbs&ch=mfm&city=busan", mhz: 102.1, brand: "CBS_MUSIC" },
+      { name: "부산CBS 표준FM", url: "https://radio.bsod.kr/stream?stn=cbs&ch=sfm&city=busan", mhz: 102.9, brand: "CBS" },
+      { name: "연제공동체라디오", url: "https://radio.bsod.kr/stream?stn=community&ch=yeonjefm", mhz: 103.3, brand: "연제FM" },
+      { name: "KBS부산 1라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=1radio&city=busan", mhz: 103.7, brand: "KBS" },
+      { name: "TBN 울산교통방송", url: "https://radio.bsod.kr/stream?stn=tbn&city=ulsan", mhz: 104.1, brand: "TBN" },
+      { name: "EBS 반디 외국어 전문", url: "https://radio.bsod.kr/stream?stn=ebs&ch=bandi", mhz: 104.6, isWeb: true, brand: "EBS" },
+      { name: "WBS 부산원음방송", url: "https://radio.bsod.kr/stream?stn=wbs&city=busan", mhz: 104.9, brand: "WBS" },
+      { name: "KNN 러브FM (부산)", url: "https://radio.bsod.kr/stream?stn=sbs&ch=lovefm&city=busan", mhz: 105.7, brand: "KNN" },
+      { name: "KBS창원 2라디오", url: "https://radio.bsod.kr/stream?stn=kbs&ch=2radio&city=changwon", mhz: 106.1, brand: "KBS_HAPPY" },
+      { name: "경남CBS 표준FM", url: "https://radio.bsod.kr/stream?stn=cbs&ch=sfm&city=gyeongnam", mhz: 106.9, brand: "CBS" },
+      { name: "FEBC 울산극동방송", url: "https://radio.bsod.kr/stream?stn=febc&city=ulsan", mhz: 107.3, brand: "FEBC" },
+      { name: "EBS FM", url: "https://radio.bsod.kr/stream?stn=ebs&ch=fm", mhz: 107.7, brand: "EBS" }
+    ];
+
+    function computeDialScale(item) {
+      if (item.isAm) return 40;
+      const min = 88.0, max = 108.0;
+      const pct = ((item.mhz - min) / (max - min)) * 92 + 4;
+      return Math.max(3, Math.min(97, pct));
+    }
+
+    function processStationList(list) {
+      return [...list].sort((a, b) => {
+        if (a.isAm && !b.isAm) return 1;
+        if (!a.isAm && b.isAm) return -1;
+        return a.mhz - b.mhz;
+      }).map(item => ({
+        ...item,
+        scalePos: computeDialScale(item),
+        displayFreq: item.isAm ? `${item.mhz} KHz` : `${item.mhz.toFixed(1)} MHz`
+      }));
+    }
+
+    const STATIONS = {
+      seoul: processStationList(RAW_SEOUL),
+      busan: processStationList(RAW_BUSAN)
+    };
+
+    let currentRegion = 'seoul';
+    let currentStationIndex = 2; // Default: KBS 2FM (89.1)
+    let isPowerOn = true;
+    let isAudioPlaying = false;
+
+    // Volume Angle calibration: Left 15 deg = 0%, Right 275 deg = 100%
+    const VOL_MIN_DEG = 15;
+    const VOL_MAX_DEG = 275;
+    let currentVolPercent = 70;
+    let currentVolAngle = VOL_MIN_DEG + (VOL_MAX_DEG - VOL_MIN_DEG) * 0.70;
+
+    // Tuning knob physical angle
+    let currentTuningAngle = 45;
+
+    // DOM Elements
+    const audio = document.getElementById('radioAudio');
+    const radioCasing = document.getElementById('radioCasing');
+    const glassDial = document.getElementById('glassDial');
+    const tunerNeedle = document.getElementById('tunerNeedle');
+    const stationLogoWrapper = document.getElementById('stationLogoWrapper');
+    const stationNameDisplay = document.getElementById('stationNameDisplay');
+    const stationProgramDisplay = document.getElementById('stationProgramDisplay');
+    const freqBadge = document.getElementById('freqBadge');
+    const liveStatusBadge = document.getElementById('liveStatusBadge');
+    const stationOrderBadge = document.getElementById('stationOrderBadge');
+    const volLevelText = document.getElementById('volLevelText');
+    const volRotor = document.getElementById('volRotor');
+    const tunRotor = document.getElementById('tunRotor');
+    const iconPlay = document.getElementById('iconPlay');
+    const iconPause = document.getElementById('iconPause');
+    const liveDot = document.getElementById('liveDot');
+    const topPowerBtn = document.getElementById('topPowerBtn');
+    const totalStationCount = document.getElementById('totalStationCount');
+    const currentRegionLabel = document.getElementById('currentRegionLabel');
+
+    /* Build Speaker Grille Slats */
+    function renderSpeakerGrilles() {
+      const leftBox = document.getElementById('leftSpeakerSlats');
+      const rightBox = document.getElementById('rightSpeakerSlats');
+      let html = '';
+      for (let i = 0; i < 14; i++) {
+        html += `<div class="slat-slot"><div class="slat-pulse"></div></div>`;
+      }
+      leftBox.innerHTML = html;
+      rightBox.innerHTML = html;
+    }
+
+    function updatePlayPauseIcons() {
+      if (isAudioPlaying) {
+        iconPlay.classList.add('hidden');
+        iconPause.classList.remove('hidden');
+      } else {
+        iconPlay.classList.remove('hidden');
+        iconPause.classList.add('hidden');
+      }
+    }
+
+    /* Audio Engine & MediaSession for Android 10+ Background Play */
+    function initAudioEngine() {
+      audio.volume = currentVolPercent / 100;
+
+      audio.addEventListener('playing', () => {
+        isAudioPlaying = true;
+        liveStatusBadge.innerText = 'ON AIR';
+        liveStatusBadge.className = 'text-emerald-400 font-bold';
+        radioCasing.classList.add('playing');
+        updatePlayPauseIcons();
+        updateMediaSession();
+      });
+
+      audio.addEventListener('waiting', () => {
+        liveStatusBadge.innerText = 'TUNING...';
+        liveStatusBadge.className = 'text-amber-400 animate-pulse';
+      });
+
+      audio.addEventListener('pause', () => {
+        isAudioPlaying = false;
+        liveStatusBadge.innerText = 'PAUSED';
+        liveStatusBadge.className = 'text-stone-400 font-bold';
+        radioCasing.classList.remove('playing');
+        updatePlayPauseIcons();
+        updateMediaSession();
+      });
+
+      audio.addEventListener('error', () => {
+        liveStatusBadge.innerText = 'RECONNECT';
+        liveStatusBadge.className = 'text-red-400 animate-pulse';
+        isAudioPlaying = false;
+        updatePlayPauseIcons();
+      });
+
+      if ('mediaSession' in navigator) {
+        try {
+          navigator.mediaSession.setActionHandler('play', () => { if (isPowerOn) audio.play(); });
+          navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); });
+          navigator.mediaSession.setActionHandler('previoustrack', () => { changeStationOffset(-1); });
+          navigator.mediaSession.setActionHandler('nexttrack', () => { changeStationOffset(1); });
+        } catch (e) {
+          console.warn('MediaSession handler warning:', e);
+        }
+      }
+    }
+
+    function loadStation(index, shouldPlay = true) {
+      const list = STATIONS[currentRegion];
+      if (!list || list.length === 0) return;
+
+      currentStationIndex = (index + list.length) % list.length;
+      const st = list[currentStationIndex];
+
+      stationNameDisplay.innerText = st.name;
+      freqBadge.innerText = st.displayFreq;
+      
+      const curProg = getCurrentProgram(st.name);
+      stationProgramDisplay.innerText = `NOW: ${curProg}`;
+      stationOrderBadge.innerText = `CH ${(currentStationIndex + 1).toString().padStart(2, '0')} / ${list.length}`;
+      
+      // Update Station Logo SVG
+      stationLogoWrapper.innerHTML = getStationLogoSvg(st.brand);
+
+      // Move dial needle
+      tunerNeedle.style.left = `${st.scalePos}%`;
+
+      audio.src = st.url;
+      if (isPowerOn && shouldPlay) {
+        audio.play().catch(() => {
+          liveStatusBadge.innerText = 'TOUCH TO PLAY';
+          liveStatusBadge.className = 'text-stone-300';
+          updatePlayPauseIcons();
+        });
+      }
+
+      updateMediaSession();
+      renderChannelList();
+    }
+
+    function updateMediaSession() {
+      if (!('mediaSession' in navigator)) return;
+      const list = STATIONS[currentRegion];
+      const st = list[currentStationIndex];
+      if (!st) return;
+
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: st.name,
+          artist: `1966 금성사 GoldStar (${st.displayFreq})`,
+          album: currentRegion === 'seoul' ? '수도권 / 전국 방송' : '부산 / 경남 / 울산 방송',
+          artwork: [
+            { src: 'https://placehold.co/256x256/222/ff9d1e?text=GoldStar', sizes: '256x256', type: 'image/png' }
+          ]
+        });
+        navigator.mediaSession.playbackState = isAudioPlaying ? 'playing' : 'paused';
+      } catch (err) {
+        console.warn('MediaMetadata warning:', err);
+      }
+    }
+
+    function changeStationOffset(offset) {
+      if (!isPowerOn) return;
+      loadStation(currentStationIndex + offset, true);
+    }
+
+    function handleDialClick(e) {
+      if (!isPowerOn) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickPct = ((e.clientX - rect.left) / rect.width) * 100;
+      const list = STATIONS[currentRegion];
+
+      let closestIdx = 0;
+      let minDiff = 999;
+      list.forEach((st, idx) => {
+        const diff = Math.abs(st.scalePos - clickPct);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIdx = idx;
+        }
+      });
+      loadStation(closestIdx, true);
+    }
+
+    /*
+     * Rotary Knobs Physics
+     */
+    function setupRotaryKnobs() {
+      const volAnchor = document.getElementById('volAnchor');
+      const tunAnchor = document.getElementById('tunAnchor');
+
+      function getPointerAngle(e, element) {
+        const rect = element.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let deg = Math.atan2(clientY - cy, clientX - cx) * (180 / Math.PI);
+        if (deg < 0) deg += 360;
+        return deg;
+      }
+
+      /* VOLUME KNOB CONTROLLER (15° to 275°) */
+      let isVolDragging = false;
+
+      function updateVolumeByAngle(deg) {
+        let clampedDeg = deg;
+        if (clampedDeg < VOL_MIN_DEG) clampedDeg = VOL_MIN_DEG;
+        if (clampedDeg > VOL_MAX_DEG && clampedDeg < 315) clampedDeg = VOL_MAX_DEG;
+        if (clampedDeg >= 315) clampedDeg = VOL_MIN_DEG;
+
+        currentVolAngle = clampedDeg;
+        const pct = Math.round(((clampedDeg - VOL_MIN_DEG) / (VOL_MAX_DEG - VOL_MIN_DEG)) * 100);
+        currentVolPercent = Math.max(0, Math.min(100, pct));
+
+        volRotor.style.transform = `rotate(${currentVolAngle}deg)`;
+        audio.volume = currentVolPercent / 100;
+        volLevelText.innerText = `${currentVolPercent}%`;
+      }
+
+      function onVolStart(e) {
+        if (!isPowerOn) return;
+        isVolDragging = true;
+        const deg = getPointerAngle(e, volAnchor);
+        updateVolumeByAngle(deg);
+        e.preventDefault();
+      }
+
+      function onVolMove(e) {
+        if (!isVolDragging || !isPowerOn) return;
+        const deg = getPointerAngle(e, volAnchor);
+        updateVolumeByAngle(deg);
+      }
+
+      function onVolEnd() {
+        isVolDragging = false;
+      }
+
+      volAnchor.addEventListener('mousedown', onVolStart);
+      volAnchor.addEventListener('touchstart', onVolStart, { passive: false });
+      window.addEventListener('mousemove', onVolMove);
+      window.addEventListener('touchmove', onVolMove, { passive: false });
+      window.addEventListener('mouseup', onVolEnd);
+      window.addEventListener('touchend', onVolEnd);
+
+      /* TUNING KNOB CONTROLLER (Smooth damping) */
+      let isTunDragging = false;
+      let lastTunAngle = 0;
+      let accumulatedDelta = 0;
+      const DAMPING_THRESHOLD = 32;
+
+      function onTunStart(e) {
+        if (!isPowerOn) return;
+        isTunDragging = true;
+        lastTunAngle = getPointerAngle(e, tunAnchor);
+        accumulatedDelta = 0;
+        e.preventDefault();
+      }
+
+      function onTunMove(e) {
+        if (!isTunDragging || !isPowerOn) return;
+        const currentAngle = getPointerAngle(e, tunAnchor);
+        let delta = currentAngle - lastTunAngle;
+
+        if (delta > 180) delta -= 360;
+        if (delta < -180) delta += 360;
+
+        currentTuningAngle = (currentTuningAngle + delta) % 360;
+        tunRotor.style.transform = `rotate(${currentTuningAngle}deg)`;
+
+        accumulatedDelta += delta;
+
+        if (Math.abs(accumulatedDelta) >= DAMPING_THRESHOLD) {
+          if (accumulatedDelta > 0) {
+            changeStationOffset(1);
+          } else {
+            changeStationOffset(-1);
+          }
+          accumulatedDelta = 0;
+        }
+
+        lastTunAngle = currentAngle;
+      }
+
+      function onTunEnd() {
+        isTunDragging = false;
+        accumulatedDelta = 0;
+      }
+
+      tunAnchor.addEventListener('mousedown', onTunStart);
+      tunAnchor.addEventListener('touchstart', onTunStart, { passive: false });
+      window.addEventListener('mousemove', onTunMove);
+      window.addEventListener('touchmove', onTunMove, { passive: false });
+      window.addEventListener('mouseup', onTunEnd);
+      window.addEventListener('touchend', onTunEnd);
+
+      // Mouse Wheel for Tuning
+      let wheelAccum = 0;
+      tunAnchor.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (!isPowerOn) return;
+        wheelAccum += e.deltaY;
+        if (Math.abs(wheelAccum) >= 80) {
+          if (wheelAccum > 0) {
+            changeStationOffset(1);
+            currentTuningAngle = (currentTuningAngle + 25) % 360;
+          } else {
+            changeStationOffset(-1);
+            currentTuningAngle = (currentTuningAngle - 25 + 360) % 360;
+          }
+          tunRotor.style.transform = `rotate(${currentTuningAngle}deg)`;
+          wheelAccum = 0;
+        }
+      });
+    }
+
+    function togglePower() {
+      isPowerOn = !isPowerOn;
+      if (isPowerOn) {
+        glassDial.classList.add('radio-on');
+        liveDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-red-600 animate-ping';
+        topPowerBtn.className = 'w-9 h-4 bg-amber-100 hover:bg-white rounded-t border-t-2 border-x-2 border-stone-300 shadow-md text-[9px] font-bold text-stone-900 transition active:translate-y-0.5';
+        loadStation(currentStationIndex, true);
+      } else {
+        glassDial.classList.remove('radio-on');
+        liveDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-stone-600';
+        topPowerBtn.className = 'w-9 h-3.5 bg-stone-400 rounded-t border-t-2 border-x-2 border-stone-600 shadow text-[9px] font-bold text-stone-950 transition translate-y-0.5';
+        audio.pause();
+        liveStatusBadge.innerText = 'OFF';
+        liveStatusBadge.className = 'text-stone-500 font-bold';
+        stationNameDisplay.innerText = '-- 전원 꺼짐 --';
+        stationProgramDisplay.innerText = '상단 PWR 버튼을 눌러 전원을 켜주세요';
+        radioCasing.classList.remove('playing');
+        isAudioPlaying = false;
+        updatePlayPauseIcons();
+      }
+    }
+
+    function togglePlayPause() {
+      if (!isPowerOn) {
+        togglePower();
+        return;
+      }
+      if (audio.paused) {
+        audio.play().catch(e => console.log('Audio play error:', e));
+      } else {
+        audio.pause();
+      }
+    }
+
+    /* Region Selector Modal */
+    function toggleRegionModal() {
+      const modal = document.getElementById('regionModal');
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+
+    function selectRegion(regionKey) {
+      currentRegion = regionKey;
+      currentRegionLabel.innerText = regionKey === 'seoul' ? '수도권 / 전국' : '부산 / 경남 / 울산';
+      document.getElementById('modalRegionBadge').innerText = currentRegionLabel.innerText;
+      totalStationCount.innerText = STATIONS[currentRegion].length;
+      toggleRegionModal();
+      loadStation(0, isAudioPlaying);
+    }
+
+    /* Frequency List Modal ('주파수 목록') */
+    function toggleChannelModal() {
+      const modal = document.getElementById('channelModal');
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+      if (!modal.classList.contains('hidden')) {
+        document.getElementById('searchInput').value = '';
+        renderChannelList();
+      }
+    }
+
+    function renderChannelList(searchQuery = '') {
+      const container = document.getElementById('channelList');
+      const list = STATIONS[currentRegion];
+      let items = list;
+
+      if (searchQuery.trim() !== '') {
+        const q = searchQuery.toLowerCase();
+        items = list.filter(st => st.name.toLowerCase().includes(q) || st.displayFreq.toLowerCase().includes(q));
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-center py-6 text-stone-500 text-xs">일치하는 방송 채널이 없습니다.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(st => {
+        const originalIndex = list.findIndex(item => item.name === st.name && item.mhz === st.mhz);
+        const isCurrent = (originalIndex === currentStationIndex);
+        return `
+          <div onclick="selectDirectStation(${originalIndex})" class="flex items-center justify-between p-2 rounded border cursor-pointer transition ${
+            isCurrent
+              ? 'bg-amber-600/30 border-amber-500 text-amber-200'
+              : 'bg-stone-950/80 border-stone-800 text-stone-300 hover:bg-stone-800 hover:border-stone-700'
+          }">
+            <div class="flex items-center space-x-2.5 truncate">
+              <!-- Channel Brand Logo in list -->
+              <div class="w-7 h-7 rounded bg-stone-900 border border-stone-700 flex items-center justify-center p-0.5 shrink-0 overflow-hidden shadow">
+                ${getStationLogoSvg(st.brand)}
+              </div>
+              <div class="flex flex-col truncate">
+                <div class="flex items-center space-x-1.5 truncate">
+                  <span class="text-xs font-bold truncate ${isCurrent ? 'text-amber-300' : 'text-stone-200'}">
+                    ${st.name}
+                  </span>
+                  <!-- Realtime On-Air Program Badge next to Channel Name -->
+                  <span class="text-[10px] px-1.5 py-0.2 rounded font-sans truncate ${isCurrent ? 'bg-amber-500/25 text-amber-300 border border-amber-500/50' : 'bg-stone-800 text-amber-200/90 border border-stone-700'}" title="${getCurrentProgram(st.name)}">
+                    NOW: ${getCurrentProgram(st.name)}
+                  </span>
+                </div>
+                <span class="text-[10px] text-stone-400 font-mono">
+                  ${st.displayFreq}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 shrink-0">
+              <span class="text-xs ${isCurrent ? 'text-amber-400 font-bold' : 'text-stone-500'}">
+                ${isCurrent ? '▶ 수신 중' : '선택'}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectDirectStation(index) {
+      if (!isPowerOn) togglePower();
+      loadStation(index, true);
+      toggleChannelModal();
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('searchInput').value;
+      renderChannelList(q);
+    }
+
+    function toggleApkModal() {
+      const modal = document.getElementById('apkModal');
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+
+    // App Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSpeakerGrilles();
+      initAudioEngine();
+      setupRotaryKnobs();
+
+      volRotor.style.transform = `rotate(${currentVolAngle}deg)`;
+      volLevelText.innerText = `${currentVolPercent}%`;
+      tunRotor.style.transform = `rotate(${currentTuningAngle}deg)`;
+
+      currentRegion = 'seoul';
+      totalStationCount.innerText = STATIONS.seoul.length;
+      loadStation(2, false); // Initialize at KBS 2FM 89.1
+      glassDial.classList.add('radio-on');
+    });
+  </script>
+</body>
+</html>
