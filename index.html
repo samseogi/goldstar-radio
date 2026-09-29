@@ -396,14 +396,12 @@
                     <div id="stationLogoWrapper" class="w-full h-full flex items-center justify-center"></div>
                   </div>
 
-                  <!-- 방송정보를 채널명 옆에 나란히 표시 -->
+                  <!-- 방송정보를 채널명 바로 옆에 나란히 가로 한 줄로 표시 (정보 없을 시 숨김) -->
                   <div class="flex items-center space-x-2 truncate">
                     <span id="stationNameDisplay" class="text-amber-300 font-bold text-xs sm:text-sm truncate">
                       KBS 2FM (쿨FM)
                     </span>
-                    <span id="stationProgramDisplay" class="text-[10px] bg-amber-500/20 text-amber-200 border border-amber-500/40 px-1.5 py-0.5 rounded font-sans truncate shrink-0 max-w-[170px] sm:max-w-[240px]">
-                      생방송 라디오 스트리밍
-                    </span>
+                    <span id="stationProgramDisplay" class="text-[10px] bg-amber-500/20 text-amber-200 border border-amber-500/40 px-1.5 py-0.5 rounded font-sans truncate shrink-0 max-w-[170px] sm:max-w-[240px]"></span>
                   </div>
                 </div>
 
@@ -567,11 +565,12 @@
       </div>
 
     </div>
- 
+
+    
   </main>
 
   <!-- Region Selection Modal -->
-  <div id="regionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3">
+  <div id="regionModal" style="display:none;" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm items-center justify-center p-3">
     <div class="bg-stone-900 border-2 border-stone-600 rounded-xl w-full max-w-sm flex flex-col shadow-2xl overflow-hidden">
       <div class="p-3 border-b border-stone-700 flex justify-between items-center bg-stone-950">
         <span class="text-amber-500 font-bold text-sm">📍 방송 수신 지역 선택</span>
@@ -603,7 +602,7 @@
   </div>
 
   <!-- Frequency List Modal ('주파수 목록') -->
-  <div id="channelModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3">
+  <div id="channelModal" style="display:none;" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm items-center justify-center p-3">
     <div class="bg-stone-900 border-2 border-stone-600 rounded-xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl">
       <div class="p-3 border-b border-stone-700 flex justify-between items-center bg-stone-950 rounded-t-xl">
         <div class="flex items-center space-x-2">
@@ -633,7 +632,7 @@
   </div>
 
   <!-- APK Information Modal -->
-  <div id="apkModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-3">
+  <div id="apkModal" style="display:none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3">
     <div class="bg-stone-900 border-2 border-amber-600/70 rounded-xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl text-stone-200">
       <div class="p-3.5 border-b border-stone-700 flex justify-between items-center bg-stone-950 rounded-t-xl">
         <h3 class="text-amber-400 font-bold text-sm sm:text-base">
@@ -670,8 +669,8 @@
     </div>
   </div>
 
-  <!-- Audio Element -->
-  <audio id="radioAudio" preload="none" playsinline></audio>
+  <!-- Audio Element (crossorigin for Web Audio API Normalization) -->
+  <audio id="radioAudio" preload="none" playsinline crossorigin="anonymous"></audio>
 
   <script>
     /*
@@ -726,6 +725,117 @@
         default:
           return `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="8" fill="#27272A"/><circle cx="50" cy="50" r="28" fill="#3F3F46"/><text x="50" y="57" font-size="18" font-weight="900" fill="#F59E0B" text-anchor="middle" font-family="sans-serif">FM</text></svg>`;
       }
+    }
+
+    /*
+     * 네이버 라디오 편성표 기준 방송사별 표준 시간대 On-Air 프로그램 매핑 테이블
+     */
+    const RADIO_SCHEDULE_TABLE = {
+      "KBS 2FM": [
+        [5, 7, "상쾌한 아침"], [7, 9, "조우종의 FM대행진"], [9, 11, "이현우의 음악앨범"],
+        [11, 12, "박명수의 라디오쇼"], [12, 14, "이은지의 가요광장"], [14, 16, "하하의 슈퍼라디오"],
+        [16, 18, "청하의 볼륨을 높여요"], [18, 20, "사랑하기 좋은 날 이금희"], [20, 22, "키스 더 라디오"],
+        [22, 24, "스테이션 Z"], [0, 2, "더 밤"]
+      ],
+      "KBS 1FM": [
+        [5, 7, "국악의 향기"], [7, 9, "출발 FM과 함께"], [9, 11, "신윤주의 가정음악"],
+        [11, 12, "KBS 음악실"], [12, 14, "생생 클래식"], [14, 16, "명연주 명음반"],
+        [16, 17, "노래의 날개 위에"], [17, 18, "FM 풍류마을"], [18, 20, "세상의 모든 음악"],
+        [20, 22, "FM 실황음악"], [22, 24, "당신의 밤과 음악"]
+      ],
+      "KBS 1라디오": [
+        [5, 6, "건강 365"], [6, 7, "출발 좋은 아침"], [7, 9, "고성국의 전격시사"],
+        [9, 10, "성공예감 이대호입니다"], [10, 11, "라디오 오늘"], [11, 12, "뉴스 브런치"],
+        [12, 14, "정오종합뉴스 / 세상의 모든 정보"], [14, 16, "뉴스 중계탑"], [16, 17, "경제세미나"],
+        [17, 19, "뉴스레터 라이브"], [19, 21, "KBS 열린토론"], [21, 23, "뉴스 9 브리핑"], [23, 24, "문화 공감"]
+      ],
+      "KBS 2라디오": [
+        [5, 7, "여기는 2라디오"], [7, 9, "상쾌한 아침"], [9, 11, "주현미의 러브레터"],
+        [11, 12, "박명수의 라디오쇼(재)"], [12, 14, "임백천의 백뮤직"], [14, 16, "이각경의 해피타임 4시"],
+        [16, 18, "행복한 두시 조성모입니다"], [18, 20, "사랑하기 좋은 날"], [20, 22, "김혜영과 함께"],
+        [22, 24, "밤을 잊은 그대에게"]
+      ],
+      "MBC FM4U": [
+        [5, 7, "세상을 여는 아침"], [7, 9, "굿모닝FM 테이입니다"], [9, 11, "오늘아침 정지영입니다"],
+        [11, 12, "이석훈의 브런치카페"], [12, 14, "정오의 희망곡 김신영입니다"], [14, 16, "2시의 데이트 안영미입니다"],
+        [16, 18, "완벽한 하루 이상순입니다"], [18, 20, "배철수의 음악캠프"], [20, 22, "김이나의 별이 빛나는 밤에"],
+        [22, 24, "친한친구"], [0, 2, "신혜림의 저스트 팝"]
+      ],
+      "MBC 표준FM": [
+        [5, 6, "건강한 아침"], [6, 7, "뉴스하이킥 모닝"], [7, 9, "김종배의 시선집중"],
+        [9, 11, "여성시대 양희은, 김일중입니다"], [11, 12, "손에 잡히는 경제 이진우"],
+        [12, 14, "정오종합뉴스 / 2시만세"], [14, 16, "박준형, 박영진의 2시만세"],
+        [16, 18, "정선희, 문천식의 지금은 라디오 시대"], [18, 20, "권순표의 뉴스 하이킥"],
+        [20, 22, "원더풀 라디오 김현철입니다"], [22, 24, "신장식의 뉴스하이킥 야간편"]
+      ],
+      "SBS 파워FM": [
+        [5, 7, "이인권의 펀펀투데이"], [7, 9, "김영철의 파워FM"], [9, 11, "아름다운 이 아침 봉태규"],
+        [11, 12, "박하선의 씨네타운"], [12, 14, "12시엔 주현영"], [14, 16, "두시탈출 컬투쇼"],
+        [16, 18, "황제성의 황제파워"], [18, 20, "박소현의 러브게임"], [20, 22, "웬디의 영스트리트"],
+        [22, 23, "배성재의 텐"], [23, 24, "딘딘의 Music High"]
+      ],
+      "SBS 러브FM": [
+        [5, 6, "러브 라이브"], [6, 7, "고현준의 뉴스브리핑"], [7, 9, "김태현의 정치쇼"],
+        [9, 11, "이숙영의 러브FM"], [11, 12, "박세미의 수다가 체질"], [12, 14, "뜨거우면 지상렬"],
+        [14, 16, "유민상의 배고픈 라디오"], [16, 18, "그대의 밤, 정엽입니다"],
+        [18, 20, "김학도, 노사연의 러브쇼"], [20, 22, "퇴근길 종합뉴스 & 뮤직"]
+      ],
+      "CBS 음악FM": [
+        [4, 6, "Amazing grace"], [6, 7, "김정원의 아름다운 당신에게"], [7, 9, "김용신의 그대와 여는 아침"],
+        [9, 11, "강석우의 아름다운 당신에게"], [11, 12, "신지혜의 영화음악"], [12, 14, "이수영의 12시에 만납시다"],
+        [14, 16, "한동준의 FM POPS"], [16, 18, "박승화의 가요속으로"], [18, 20, "배미향의 저녁스케치"],
+        [20, 22, "김현주의 행복한 동행"], [22, 24, "허윤희의 꿈과 음악사이에"]
+      ],
+      "CBS 표준FM": [
+        [5, 7, "새아침입니다"], [7, 9, "김덕기의 아침뉴스 / 뉴스쇼"], [9, 11, "그대 창가에 이강민입니다"],
+        [11, 12, "정민아의 샬롬FM"], [12, 14, "유영석의 팝콘"], [14, 16, "시사자키 정관용입니다"],
+        [16, 18, "박재홍의 한판승부"], [18, 20, "퇴근길 뉴스"], [20, 22, "라디오 강단"]
+      ],
+      "YTN 라디오": [
+        [6, 7, "뉴스킹"], [7, 9, "뉴스파이팅 배승희"], [9, 10, "조태현의 생생경제"],
+        [10, 12, "슬기로운 라디오생활"], [12, 14, "뉴스 정면승부 1부"], [14, 16, "이성규의 뉴스라이브"],
+        [16, 18, "이슈앤피플"], [18, 20, "신율의 뉴스 정면승부"], [20, 22, "YTN 24 뉴스라운지"]
+      ],
+      "TBS FM": [
+        [7, 9, "TBS 아침매거진"], [9, 10, "9시 매거진"], [10, 12, "라디오를 켜라"],
+        [12, 14, "달콤한 오후"], [14, 16, "TBS 2시 라이브"], [16, 18, "퇴근길 TBS"], [18, 20, "서울 밤 토크"]
+      ],
+      "EBS FM": [
+        [6, 7, "모닝스페셜"], [7, 8, "입이트이는영어"], [8, 9, "귀가트이는영어"], [9, 10, "이지 라이팅"],
+        [10, 11, "오디오 천국"], [11, 12, "정오의 외국어 클래스"], [12, 13, "이현석의 라이브 영어"],
+        [13, 15, "책 읽어주는 라디오"], [15, 17, "EBS 북카페"], [17, 19, "세계음악기행"], [19, 21, "아이돌 한국어"]
+      ],
+      "TBN": [
+        [6, 7, "출발 경인대행진"], [7, 9, "출발 대행진 2부"], [9, 11, "스튜디오 1005 / 교통시대"],
+        [11, 12, "TBN 차차차"], [12, 14, "TBN 정오종합뉴스 & 가요"], [14, 16, "오후의 가요데이트"],
+        [16, 18, "달리는 라디오"], [18, 20, "달리는 라디오 퇴근길특집"], [20, 22, "어울림 라디오"]
+      ]
+    };
+
+    // 편성표에 정확히 존재하는 경우만 문자열 반환, 없으면 null 반환
+    function getCurrentProgram(stnName) {
+      const now = new Date();
+      const hour = now.getHours();
+
+      let matchedKey = null;
+      for (const key in RADIO_SCHEDULE_TABLE) {
+        if (stnName.includes(key) || key.includes(stnName)) {
+          matchedKey = key;
+          break;
+        }
+      }
+
+      if (matchedKey && RADIO_SCHEDULE_TABLE[matchedKey]) {
+        for (const [start, end, title] of RADIO_SCHEDULE_TABLE[matchedKey]) {
+          if (start <= end) {
+            if (hour >= start && hour < end) return title;
+          } else {
+            if (hour >= start || hour < end) return title;
+          }
+        }
+      }
+
+      return null; // 방송정보가 없는 채널은 표시하지 않음
     }
 
     /*
@@ -850,6 +960,33 @@
     // Tuning knob physical angle
     let currentTuningAngle = 45;
 
+    // Web Audio API Audio Normalization (전체 음량 레벨 균등화)
+    let audioCtx = null;
+    let audioSourceNode = null;
+    let compressorNode = null;
+
+    function initAudioNormalizer() {
+      if (audioCtx) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+        audioSourceNode = audioCtx.createMediaElementSource(audio);
+        
+        // 다이내믹스 컴프레서 설정 (방송사별 볼륨 차이 완화 및 음압 균일화)
+        compressorNode = audioCtx.createDynamicsCompressor();
+        compressorNode.threshold.setValueAtTime(-24, audioCtx.currentTime);
+        compressorNode.knee.setValueAtTime(30, audioCtx.currentTime);
+        compressorNode.ratio.setValueAtTime(12, audioCtx.currentTime);
+        compressorNode.attack.setValueAtTime(0.003, audioCtx.currentTime);
+        compressorNode.release.setValueAtTime(0.25, audioCtx.currentTime);
+
+        audioSourceNode.connect(compressorNode);
+        compressorNode.connect(audioCtx.destination);
+      } catch (e) {
+        console.warn('Web Audio Normalizer warning:', e);
+      }
+    }
+
     // DOM Elements
     const audio = document.getElementById('radioAudio');
     const radioCasing = document.getElementById('radioCasing');
@@ -950,7 +1087,14 @@
       freqBadge.innerText = st.displayFreq;
       
       const curProg = getCurrentProgram(st.name);
-      stationProgramDisplay.innerText = `NOW: ${curProg}`;
+      if (curProg) {
+        stationProgramDisplay.innerText = `NOW: ${curProg}`;
+        stationProgramDisplay.style.display = 'inline-block';
+      } else {
+        stationProgramDisplay.innerText = '';
+        stationProgramDisplay.style.display = 'none';
+      }
+
       stationOrderBadge.innerText = `CH ${(currentStationIndex + 1).toString().padStart(2, '0')} / ${list.length}`;
       
       // Update Station Logo SVG
@@ -961,7 +1105,12 @@
 
       audio.src = st.url;
       if (isPowerOn && shouldPlay) {
-        audio.play().catch(() => {
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        audio.play().then(() => {
+          initAudioNormalizer();
+        }).catch(() => {
           liveStatusBadge.innerText = 'TOUCH TO PLAY';
           liveStatusBadge.className = 'text-stone-300';
           updatePlayPauseIcons();
@@ -979,8 +1128,10 @@
       if (!st) return;
 
       try {
+        const curProg = getCurrentProgram(st.name);
+        const titleText = curProg ? `${st.name} - ${curProg}` : st.name;
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: st.name,
+          title: titleText,
           artist: `1966 금성사 GoldStar (${st.displayFreq})`,
           album: currentRegion === 'seoul' ? '수도권 / 전국 방송' : '부산 / 경남 / 울산 방송',
           artwork: [
@@ -1163,7 +1314,8 @@
         liveStatusBadge.innerText = 'OFF';
         liveStatusBadge.className = 'text-stone-500 font-bold';
         stationNameDisplay.innerText = '-- 전원 꺼짐 --';
-        stationProgramDisplay.innerText = '상단 PWR 버튼을 눌러 전원을 켜주세요';
+        stationProgramDisplay.innerText = '';
+        stationProgramDisplay.style.display = 'none';
         radioCasing.classList.remove('playing');
         isAudioPlaying = false;
         updatePlayPauseIcons();
@@ -1176,7 +1328,12 @@
         return;
       }
       if (audio.paused) {
-        audio.play().catch(e => console.log('Audio play error:', e));
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        audio.play().then(() => {
+          initAudioNormalizer();
+        }).catch(e => console.log('Audio play error:', e));
       } else {
         audio.pause();
       }
@@ -1185,8 +1342,8 @@
     /* Region Selector Modal */
     function toggleRegionModal() {
       const modal = document.getElementById('regionModal');
-      modal.classList.toggle('hidden');
-      modal.classList.toggle('flex');
+      const isVisible = window.getComputedStyle(modal).display !== 'none';
+      modal.style.display = isVisible ? 'none' : 'flex';
     }
 
     function selectRegion(regionKey) {
@@ -1201,9 +1358,11 @@
     /* Frequency List Modal ('주파수 목록') */
     function toggleChannelModal() {
       const modal = document.getElementById('channelModal');
-      modal.classList.toggle('hidden');
-      modal.classList.toggle('flex');
-      if (!modal.classList.contains('hidden')) {
+      const isVisible = window.getComputedStyle(modal).display !== 'none';
+      if (isVisible) {
+        modal.style.display = 'none';
+      } else {
+        modal.style.display = 'flex';
         document.getElementById('searchInput').value = '';
         renderChannelList();
       }
@@ -1227,6 +1386,8 @@
       container.innerHTML = items.map(st => {
         const originalIndex = list.findIndex(item => item.name === st.name && item.mhz === st.mhz);
         const isCurrent = (originalIndex === currentStationIndex);
+        const prog = getCurrentProgram(st.name);
+
         return `
           <div onclick="selectDirectStation(${originalIndex})" class="flex items-center justify-between p-2 rounded border cursor-pointer transition ${
             isCurrent
@@ -1243,10 +1404,13 @@
                   <span class="text-xs font-bold truncate ${isCurrent ? 'text-amber-300' : 'text-stone-200'}">
                     ${st.name}
                   </span>
-                  <!-- Realtime On-Air Program Badge next to Channel Name -->
-                  <span class="text-[10px] px-1.5 py-0.2 rounded font-sans truncate ${isCurrent ? 'bg-amber-500/25 text-amber-300 border border-amber-500/50' : 'bg-stone-800 text-amber-200/90 border border-stone-700'}" title="${getCurrentProgram(st.name)}">
-                    NOW: ${getCurrentProgram(st.name)}
-                  </span>
+                  ${
+                    prog
+                      ? `<span class="text-[10px] px-1.5 py-0.2 rounded font-sans truncate ${isCurrent ? 'bg-amber-500/25 text-amber-300 border border-amber-500/50' : 'bg-stone-800 text-amber-200/90 border border-stone-700'}" title="${prog}">
+                          NOW: ${prog}
+                        </span>`
+                      : ''
+                  }
                 </div>
                 <span class="text-[10px] text-stone-400 font-mono">
                   ${st.displayFreq}
@@ -1276,8 +1440,8 @@
 
     function toggleApkModal() {
       const modal = document.getElementById('apkModal');
-      modal.classList.toggle('hidden');
-      modal.classList.toggle('flex');
+      const isVisible = window.getComputedStyle(modal).display !== 'none';
+      modal.style.display = isVisible ? 'none' : 'flex';
     }
 
     // App Initialization
@@ -1292,6 +1456,7 @@
 
       currentRegion = 'seoul';
       totalStationCount.innerText = STATIONS.seoul.length;
+      renderChannelList();
       loadStation(2, false); // Initialize at KBS 2FM 89.1
       glassDial.classList.add('radio-on');
     });
